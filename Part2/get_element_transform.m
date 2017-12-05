@@ -1,0 +1,23 @@
+function [ M ] = get_element_transform( p1, p2, p3 )
+%UNTITLED Summary of this function goes here
+%   Detailed explanation goes here
+    b11 = 0; b12 = 0;
+    b21 = 1; b22 = 0;
+    b31 = 0; b32 = 1;
+    A = [...
+        b11, b12, 0, 0, 1, 0;...
+        0, 0, b11, b12, 0, 1;...
+        b21, b22, 0, 0, 1, 0;...
+        0, 0, b21, b22, 0, 1;...
+        b31, b32, 0, 0, 1, 0;...
+        0, 0, b31, b32, 0, 1;... 
+    ];
+    b = [p1(1), p1(2), p2(1), p2(2), p3(1), p3(2)]';
+    Mvec = A\b;
+    M = zeros(2,2);
+    M(1,1) = Mvec(1);
+    M(1,2) = Mvec(2);
+    M(2,1) = Mvec(3);
+    M(2,2) = Mvec(4);
+end
+
