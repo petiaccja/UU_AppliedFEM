@@ -1,6 +1,9 @@
+hmax_v = [1/5, 1/20];
+for rep=1:2
+    
 % mesh
 geometry = @circleg;
-hmax = 1/20;
+hmax = hmax_v(rep);
 [p,e,t] = initmesh(geometry, 'hmax', hmax);
 N = length(p);
 
@@ -9,7 +12,7 @@ f = @(x) 0;
 alpha = 0.01;
 R = 0.5;
 r = 0.3;
-deltaT = 0.01;
+deltaT = 0.05;
 Tend = 30;
 rho = 10;
 
@@ -28,8 +31,8 @@ M = mass_matrix(p, e, t);
 A = alpha*stiffness_matrix(p, e, t);
 b = load_vector(p, e, t, f);
 
-G = (1/deltaT)*M + (1/2)*A;
-H = (-1/deltaT)*M + (1/2)*A;
+G = (0.5/deltaT)*M + (1/2)*A;
+H = (-0.5/deltaT)*M + (1/2)*A;
 
 I = speye(N);
 G(e(1,:),:) = I(e(1,:),:);
@@ -59,7 +62,7 @@ for time=0:deltaT:Tend
     ml(iter) = mass_loss( p, t, c_initial, c);
     
     % plot animation
-	if (mod(iter, 10) == 1)
+	if (mod(iter, 10) == 1 && rep==2)
         trimesh(t(1:3,:)', p(1,:), p(2,:), c);
         axis manual
         axis([-1, 1, -1, 1, min(c_initial)-1, max(c_initial)+1]);  
@@ -72,14 +75,20 @@ end
 set(gcf,'visible','off');
 
 
+if (rep == 2)
 figure(3);
 trimesh(t(1:3,:)', p(1,:), p(2,:), c_prev);
 title('Final solution');
+end 
 
-figure(4);
+figure(3+rep);
 plot(0:deltaT:Tend, ml);
-title('Mass loss vs time');
+restext = [' (low res) '; ' (high res)'];
+title(['Mass loss vs time', restext(rep, :)]);
 xlabel('Time');
 ylabel('Mass loss');
+
+
+end
 
 

@@ -25,6 +25,13 @@ for i=1:length(hmax)
 
     c = A\b;
     c_exact = u_exact(p)';
+    
+    % save lowest resolution mesh
+    if (i==1) 
+        p_worst = p;
+        t_worst = t;
+        c_worst = c;
+    end
 
     % calculate error
     err = c_exact - c;
@@ -37,13 +44,18 @@ figure(1);
 loglog(hmax, err_norm);
 
 polycoeff = polyfit(log(hmax), log(err_norm), 1);
-title('h vs error');
+title('Convergence rate');
 xlabel('h_{max}');
 ylabel('error');
 disp(['error ~ hmax^', num2str(polycoeff(1))]);
 
 % plot solution and reference
+figure(2);
+trimesh(t_worst(1:3,:)', p_worst(1,:), p_worst(2,:), c_worst);
+title("Low resolution solution");
 figure(3);
 trimesh(t(1:3,:)', p(1,:), p(2,:), c);
+title("High resolution solution");
 figure(4);
 trimesh(t(1:3,:)', p(1,:), p(2,:), c_exact);
+title("Exact solution");
